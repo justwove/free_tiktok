@@ -1,0 +1,8 @@
+.env
+*.cfg
+bin
+include
+lib
+lib64
+*.mp4
+*.wav
