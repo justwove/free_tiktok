@@ -28,7 +28,6 @@ def setup_reddit(client_id, client_secret, user_agent):
     return reddit_session, used_reddit_ids
 
 def get_posts(reddit_session: Reddit, SUBREDDIT: str, used_reddit_ids: list[str], max_post: int=50):
-    now = time()
     posts = [
         post for post in reddit_session.subreddit(SUBREDDIT).top(time_filter="day", limit=max_post) \
         if post.id not in used_reddit_ids
@@ -69,13 +68,13 @@ def get_content_from_post(ELEVENLABS_API_KEY: str, post):
         )
         ) for comment, comment_id in cleans_comments]
     
-    return file_name, post.title, title_voice_over, comments_voice_over, [comment.id for comment in post.comments], post.url
+    return file_name, post.title, title_voice_over, comments_voice_over, [comment.id for comment in post.comments[:50]], post.url
 
-def _setup_driver(post_url: str) -> (webdriver.Firefox, WebDriverWait):
-    options = webdriver.FirefoxOptions()
+def _setup_driver(post_url: str) -> (webdriver.Chrome, WebDriverWait):
+    options = webdriver.ChromeOptions()
     options.headless = False
     options.enable_mobile = False
-    driver = webdriver.Firefox(options=options)
+    driver = webdriver.Chrome(options=options)
     wait = WebDriverWait(driver, 10)
     driver.set_window_size(width=400, height=800)
     driver.get(post_url)
@@ -129,7 +128,8 @@ def main(margin_size=64):
     posts = get_posts(reddit_session, SUBREDDIT, used_reddit_ids)
     for post in posts:
         # print(post.__dict__); exit()
-        post.comments.replace_more(limit=0)
+        
+        post.comments.replace_more(limit=0) # Pour récuperer uniquement les commentaire et non les objet MoreComments
         ( # Récupération de toutes les informations nécessaire pour crée le clip
             file_name, post_title, title_voice_over,
             comments_voice_over, comments_ids, post_url
@@ -155,7 +155,7 @@ def main(margin_size=64):
             comments_per_videos.append((tmp_videos, total_duration))
 
         videos_background = listdir('reddit_output/BackgroundVideos/')
-        for index, comments_list, duration in enumerate(comments_per_videos):
+        for index, (comments_list, duration) in enumerate(comments_per_videos):
             clips = []
             for _index, comments in enumerate(comments_list):
                 _, comment_id, comment_voice_over = comments 

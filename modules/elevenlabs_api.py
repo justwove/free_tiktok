@@ -23,8 +23,8 @@ def voice_over(api_key, file_path, text):
     }
 
     response = requests.post(url, json=data, headers=headers)
-    print(response.content)
     if response.text.startswith('{"'):
+        print(response.content)
         new_api_key = input('Limit reached, please provide new api key (Just create a tempmail account): ')
         with open('.env', 'r') as env_file: new_env_file = env_file.read().replace(api_key, new_api_key)
         with open('.env', 'w') as env_file: env_file.write(new_env_file)
@@ -39,7 +39,7 @@ def voice_over(api_key, file_path, text):
 # with open('api_key.env', 'r') as api_key: api_key = api_key.readlines()[0].strip()
 # print(api_key); exit()
 # voice_over(api_key, 'test.wav', 'Just a test love you <3')
-with open('.env', 'r') as env_file: api_key = str(env_file.readlines()[0].split('=')[-1]).strip()
-voice_over(api_key, 'test.wav', 'Just a test love you <3')
+# with open('.env', 'r') as env_file: api_key = str(env_file.readlines()[0].split('=')[-1]).strip()
+# voice_over(api_key, 'test.wav', 'Just a test love you <3')
 
 

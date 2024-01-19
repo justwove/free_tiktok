@@ -7,3 +7,9 @@ lib64
 *.mp4
 *.wav
 __pycache__
+fake_reddit.py
+test.py
+*.png
+*.jpg
+*.jpeg
+used_ids.txt
